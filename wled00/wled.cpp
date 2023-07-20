@@ -499,6 +499,12 @@ void WLED::beginStrip()
     digitalWrite(rlyPin, (rlyMde ? bri : !bri));
 }
 
+#if defined(LOLIN_WIFI_FIX) && (defined(ARDUINO_ARCH_ESP32C3) || defined(ARDUINO_ARCH_ESP32S2))
+void WLED::WiFiApStarted(WiFiEvent_t event, WiFiEventInfo_t info){
+  WiFi.softAPenableIpV6();
+}
+#endif
+
 void WLED::initAP(bool resetAP)
 {
   if (apBehavior == AP_BEHAVIOR_BUTTON_ONLY && !resetAP)
@@ -511,6 +517,11 @@ void WLED::initAP(bool resetAP)
   DEBUG_PRINT(F("Opening access point "));
   DEBUG_PRINTLN(apSSID);
   WiFi.softAPConfig(IPAddress(4, 3, 2, 1), IPAddress(4, 3, 2, 1), IPAddress(255, 255, 255, 0));
+
+  #if defined(LOLIN_WIFI_FIX) && (defined(ARDUINO_ARCH_ESP32C3) || defined(ARDUINO_ARCH_ESP32S2))
+    WiFi.onEvent(WiFiApStarted, SYSTEM_EVENT_AP_START);
+  #endif
+
   WiFi.softAP(apSSID, apPass, apChannel, apHide);
   #if defined(LOLIN_WIFI_FIX) && (defined(ARDUINO_ARCH_ESP32C3) || defined(ARDUINO_ARCH_ESP32S2))
   WiFi.setTxPower(WIFI_POWER_8_5dBm);
