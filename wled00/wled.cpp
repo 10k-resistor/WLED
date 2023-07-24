@@ -499,7 +499,7 @@ void WLED::beginStrip()
     digitalWrite(rlyPin, (rlyMde ? bri : !bri));
 }
 
-#if defined(LOLIN_WIFI_FIX) && (defined(ARDUINO_ARCH_ESP32C3) || defined(ARDUINO_ARCH_ESP32S2))
+#ifdef ESP32
 void WLED::WiFiApStarted(WiFiEvent_t event, WiFiEventInfo_t info){
   WiFi.softAPenableIpV6();
 }
@@ -518,7 +518,7 @@ void WLED::initAP(bool resetAP)
   DEBUG_PRINTLN(apSSID);
   WiFi.softAPConfig(IPAddress(4, 3, 2, 1), IPAddress(4, 3, 2, 1), IPAddress(255, 255, 255, 0));
 
-  #if defined(LOLIN_WIFI_FIX) && (defined(ARDUINO_ARCH_ESP32C3) || defined(ARDUINO_ARCH_ESP32S2))
+  #ifdef ESP32
     WiFi.onEvent(WiFiApStarted, SYSTEM_EVENT_AP_START);
   #endif
 
